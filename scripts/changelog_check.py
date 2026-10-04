@@ -24,11 +24,16 @@ def latest_changelog_date(changelog_path):
     """从 CHANGELOG 中提取最新条目的日期（按文件中出现顺序取第一个日期）。"""
     text = changelog_path.read_text(encoding="utf-8")
     # 条目标题形如 "## V2.4.2 · 2026-10-03（...）"
+    # 约定 CHANGELOG 最新条目在前；但无论正序倒序，取所有条目标题中的最大日期，
+    # 避免"条目追加在文件尾"的写法导致误判
+    dates = []
     for line in text.splitlines():
         if line.lstrip().startswith("#"):
             m = DATE_RE.search(line)
             if m:
-                return datetime.strptime(m.group(1), "%Y-%m-%d")
+                dates.append(datetime.strptime(m.group(1), "%Y-%m-%d"))
+    if dates:
+        return max(dates)
     # 退化：全文第一个日期
     m = DATE_RE.search(text)
     if m:
