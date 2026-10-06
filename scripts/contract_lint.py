@@ -6,6 +6,8 @@
   2. 入参表（表头须含 字段/类型/必填）
   3. 出参表（表头须含 字段/类型）
   4. 错误码小节
+  5. 错误码合法性：接口声明的每个 code 必须出现在「通用约定」章的码表中
+     （错误码语义全局唯一，新增码必须先登记通用约定章）
 
 用法:
     python contract_lint.py <契约文档.md> [--strict]
@@ -71,7 +73,60 @@ def table_headers_after(body, keyword):
     return None
 
 
-def lint_block(domain, title, body):
+def is_separator_row(cells):
+    return all(re.fullmatch(r":?-+:?", c) for c in cells)
+
+
+def table_codes_after(body, keyword):
+    """在 body 中找到 keyword 行，返回其后第一个表格首列的整数 code 集合（跳过表头/分隔行）。"""
+    codes = set()
+    started = False
+    for line in body:
+        if not started:
+            if keyword in line:
+                started = True
+            continue
+        if TABLE_ROW_RE.match(line):
+            cells = [c.strip().strip("`") for c in line.strip().strip("|").split("|")]
+            if is_separator_row(cells) or (cells and cells[0].lower() in ("code", "错误码")):
+                continue
+            if cells and re.fullmatch(r"\d+", cells[0]):
+                codes.add(int(cells[0]))
+        elif codes or HEADING_RE.match(line):
+            break
+    return codes
+
+
+def parse_universal_codes(text):
+    """从「通用约定」章节的首个 code 列表格提取通用错误码集合；找不到返回 None。"""
+    codes = set()
+    in_common = False
+    in_code_table = False
+    for line in text.splitlines():
+        m = HEADING_RE.match(line)
+        if m:
+            level = len(m.group(1))
+            if level <= 2:
+                in_common = "通用约定" in m.group(2)
+                in_code_table = False
+            continue
+        if not in_common or not TABLE_ROW_RE.match(line):
+            continue
+        cells = [c.strip().strip("`") for c in line.strip().strip("|").split("|")]
+        if is_separator_row(cells):
+            continue
+        if cells and cells[0].lower() == "code":
+            in_code_table = True
+            continue
+        if in_code_table:
+            if cells and re.fullmatch(r"\d+", cells[0]):
+                codes.add(int(cells[0]))
+            else:
+                in_code_table = False  # 首列不再是数字，码表结束
+    return codes if codes else None
+
+
+def lint_block(domain, title, body, universal_codes):
     problems = []
     text = "\n".join(body)
     if not re.search(r"\|\s*action\s*\|\s*`[^`]+`", text, re.I):
@@ -93,6 +148,10 @@ def lint_block(domain, title, body):
 
     if "错误码" not in text:
         problems.append("缺少错误码小节")
+    else:
+        unknown = sorted(table_codes_after(body, "错误码") - universal_codes)
+        if unknown:
+            problems.append(f"错误码 {unknown} 未登记进通用约定码表（新增错误码必须先登记通用约定章）")
     return problems
 
 
@@ -105,6 +164,10 @@ def main():
         print(f"[ERROR] 文件不存在: {path}")
         return 2
     text = path.read_text(encoding="utf-8")
+    universal_codes = parse_universal_codes(text)
+    if universal_codes is None:
+        print(f"[ERROR] 未在 {path} 的「通用约定」章节解析到 code 码表（应含 '| code | 含义 |' 表格）")
+        return 2
     interfaces = parse_interfaces(text)
     if not interfaces:
         print(f"[ERROR] 未在 {path} 中解析到任何接口块（需含 '| action |' 元信息表）")
@@ -112,7 +175,7 @@ def main():
 
     total_problems = 0
     for domain, title, body in interfaces:
-        problems = lint_block(domain, title, body)
+        problems = lint_block(domain, title, body, universal_codes)
         if problems:
             total_problems += len(problems)
             print(f"[FAIL] {domain} > {title}")

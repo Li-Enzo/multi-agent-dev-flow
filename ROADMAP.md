@@ -6,7 +6,7 @@
 ## 脚本增强
 
 - [x] `scripts/probe_api.py`：支持 GET 请求与从环境变量读取 base URL（`PROBE_API_BASE`）
-- [ ] `scripts/contract_lint.py`：增加错误码合法性检查——接口错误码必须出现在通用约定码表中
+- [x] `scripts/contract_lint.py`：增加错误码合法性检查——接口错误码必须出现在通用约定码表中
 - [ ] `scripts/doc_pack.py`（新增）：文档包一键打包 + 包内契约与磁盘字节一致性校验（把"文档包硬规则"做成工具）
 - [ ] `scripts/token_report.py`（新增）：统计指定目录文档字数/行数，辅助决定哪些文档应归档或转 references（配合 token-saving 范式）
 - [ ] 为 4 个脚本补充 `tests/` 下的 pytest 用例（当前为手工实测，需固化成回归）
