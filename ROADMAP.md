@@ -13,7 +13,7 @@
 
 ## 文档与模板
 
-- [ ] `references/backend-paradigm.md` 补充「消息推送接收端」章节（验签 + AES 解密 + 幂等落库的真实案例）
+- [x] `references/backend-paradigm.md` 补充「消息推送接收端」章节（验签 + AES 解密 + 幂等落库的真实案例）
 - [ ] `references/agent-collab.md` 补充「配置漂移防护」清单（多环境部署复读核对流程）
 - [ ] 接口契约模板增加英文版 `api-contract-template.en.md`
 - [ ] `examples/`（新增）：一份完整的示例契约 + 对应测试用例 + 通过 contract_lint 的证明，演示模板如何套用
