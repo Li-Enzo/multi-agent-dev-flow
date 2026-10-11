@@ -30,7 +30,7 @@ multi-agent-dev-flow/
 │   ├── art-style.md          # 美术风格范式（风格指导→HTML 预览→审查整改）
 │   ├── agent-collab.md       # 多 agent 协作与防幻觉机制
 │   └── token-saving.md       # Token 节省与本地资源利用
-├── assets/templates/         # 五套文档模板（PRD/风格/契约/用例/协作规范）
+├── assets/templates/         # 五套文档模板（PRD/风格/契约/用例/协作规范；契约模板含英文版 api-contract-template.en.md）
 └── scripts/                  # 四个零依赖本地脚本（均已实测）
     ├── contract_lint.py      # 契约文档完整性检查
     ├── changelog_check.py    # 契约变更硬规则守门员
