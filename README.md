@@ -31,6 +31,7 @@ multi-agent-dev-flow/
 │   ├── agent-collab.md       # 多 agent 协作与防幻觉机制
 │   └── token-saving.md       # Token 节省与本地资源利用
 ├── assets/templates/         # 五套文档模板（PRD/风格/契约/用例/协作规范；契约模板含英文版 api-contract-template.en.md）
+├── examples/                 # 模板套用示例（示例商城完整契约 + 用例 + lint 证明）
 └── scripts/                  # 四个零依赖本地脚本（均已实测）
     ├── contract_lint.py      # 契约文档完整性检查
     ├── changelog_check.py    # 契约变更硬规则守门员
