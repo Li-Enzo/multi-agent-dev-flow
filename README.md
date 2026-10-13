@@ -1,5 +1,9 @@
 # multi-agent-dev-flow
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Python >=3.8](https://img.shields.io/badge/python-%3E%3D3.8-blue.svg)](./scripts)
+[![Last commit](https://img.shields.io/github/last-commit/Li-Enzo/multi-agent-dev-flow.svg)](https://github.com/Li-Enzo/multi-agent-dev-flow/commits/main)
+
 多 AI Agent 协作全栈开发流程 Skill：用「文档唯一事实源 + 本地脚本 + 多 agent 分工互审」的方式完成前端 + 后端 + 数据库的完整项目开发，**节省 token、缓解上下文长度危机、互相校验防止幻觉**。
 
 ## 它解决什么问题
