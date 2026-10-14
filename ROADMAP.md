@@ -21,5 +21,5 @@
 
 ## 工程化
 
-- [ ] 仓库自身引入 CHANGELOG.md 并打 `v1.1.0` tag
+- [x] 仓库自身引入 CHANGELOG.md 并打 `v1.1.0` tag
 - [ ] GitHub Actions（可选）：push 时自动跑 scripts 的 pytest
