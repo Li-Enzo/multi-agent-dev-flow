@@ -1,0 +1,25 @@
+# push / PR 到 main 时自动跑 scripts 的 pytest 回归
+# 对应 ROADMAP「工程化」：把 tests/ 下 25 个用例固化为 CI 门禁
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run regression tests
+        run: python -m pytest tests/ -v
