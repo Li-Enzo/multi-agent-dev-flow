@@ -3,11 +3,6 @@
 > 本仓库自身的变更日志。版本号与 git tag 同步；每条注明关联 commit。
 > 遵循仓库 commit 范式 `type(scope): 简述`，type ∈ feat/fix/docs/refactor/test/chore。
 
-## Unreleased
-
-- 新增新产品设计构想 `docs/human-loop-test-platform.md`：MCP 原生真人众测平台（AI 编程工作流的人类在环插件）——定位、闭环、架构原则、双轨测试者经济、两周验证路径与落地顺序。
-- ROADMAP.md 新增「新产品：MCP 原生真人众测平台」任务池 15 项（验证期 / 平台基建 / MCP 层 / 运营与风控）。
-
 ## v1.1.0 — 2026-10-09
 
 > 主题：脚本工具链补全 + 文档体系扩展（对应 ROADMAP「脚本增强」「文档与模板」两节）。
