@@ -10,6 +10,9 @@
 - [x] `scripts/doc_pack.py`（新增）：文档包一键打包 + 包内契约与磁盘字节一致性校验（把"文档包硬规则"做成工具）
 - [x] `scripts/token_report.py`（新增）：统计指定目录文档字数/行数，辅助决定哪些文档应归档或转 references（配合 token-saving 范式）
 - [x] 为 4 个脚本补充 `tests/` 下的 pytest 用例（当前为手工实测，需固化成回归）
+- [ ] `scripts/contract_diff.py`（新增）：契约破坏性变更检测——对比两版契约，字段删除/类型收窄/新增必填即 FAIL（防并行 agent 改崩调用方）
+- [ ] `scripts/probe_api.py`：支持 POST/PUT 与自定义请求头（覆盖鉴权与写操作探测）
+- [ ] `scripts/doc_pack.py`：打包生成 manifest.json（文件清单 + SHA-256），解包侧可自检完整性
 
 ## 文档与模板
 
@@ -18,11 +21,14 @@
 - [x] 接口契约模板增加英文版 `api-contract-template.en.md`
 - [x] `examples/`（新增）：一份完整的示例契约 + 对应测试用例 + 通过 contract_lint 的证明，演示模板如何套用
 - [x] README 增加徽章（MIT license、Python 版本、最后提交）
+- [ ] 契约版本演进指南（references 或 assets）：v1→v2 只加不改、字段废弃标记、并行期与下线公告模板
+- [ ] `references/agent-collab.md` 补充「契约破坏事件」复盘模板（事件线 / 影响面 / 防再发）
 
 ## 工程化
 
 - [x] 仓库自身引入 CHANGELOG.md 并打 `v1.1.0` tag
 - [x] GitHub Actions（可选）：push 时自动跑 scripts 的 pytest
+- [ ] `scripts/changelog_lint.py`（新增）：CHANGELOG Unreleased 非空校验 + commit message 范式（`type(scope): 简述`）检查，接入 CI
 
 ## 关联项目
 

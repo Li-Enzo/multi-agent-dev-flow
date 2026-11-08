@@ -3,6 +3,10 @@
 > 本仓库自身的变更日志。版本号与 git tag 同步；每条注明关联 commit。
 > 遵循仓库 commit 范式 `type(scope): 简述`，type ∈ feat/fix/docs/refactor/test/chore。
 
+## Unreleased
+
+- chore(roadmap)：任务池补充 7 项——`contract_diff.py` 契约破坏性变更检测、`probe_api.py` 写操作与自定义请求头、`doc_pack.py` manifest 完整性清单、契约版本演进指南、「契约破坏事件」复盘模板、`changelog_lint.py` 范式检查接 CI。(6257d72)
+
 ## v1.1.0 — 2026-10-09
 
 > 主题：脚本工具链补全 + 文档体系扩展（对应 ROADMAP「脚本增强」「文档与模板」两节）。
