@@ -5,7 +5,7 @@
 
 ## Unreleased
 
-- chore(roadmap)：任务池补充 7 项——`contract_diff.py` 契约破坏性变更检测、`probe_api.py` 写操作与自定义请求头、`doc_pack.py` manifest 完整性清单、契约版本演进指南、「契约破坏事件」复盘模板、`changelog_lint.py` 范式检查接 CI。(6257d72)
+- chore(roadmap)：任务池补充 6 项——`contract_diff.py` 契约破坏性变更检测、`probe_api.py` 写操作与自定义请求头、`doc_pack.py` manifest 完整性清单、契约版本演进指南、「契约破坏事件」复盘模板、`changelog_lint.py` 范式检查接 CI。(6257d72)
 
 ## v1.1.0 — 2026-10-09
 
