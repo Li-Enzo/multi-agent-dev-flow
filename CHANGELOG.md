@@ -5,7 +5,7 @@
 
 ## Unreleased
 
-- feat(scripts)：新增 `contract_diff.py` 契约破坏性变更检测——对比两版契约文档（旧 vs 新），接口删除/字段删除/类型变更/新增必填入参/选填改必填/出参必有降级即 FAIL，新增接口与可选字段等兼容变更仅 INFO；复用 contract_lint 解析器，退出码 0/1/2 与 lint 系一致。`tests/` 固化 12 个回归用例（含仓库示例自比对）；README/SKILL 脚本清单同步补齐（含此前遗漏的 doc_pack/token_report，脚本数更正为七）。(9eb67fe)
+- feat(scripts)：新增 `contract_diff.py` 契约破坏性变更检测——对比两版契约文档（旧 vs 新），接口删除/字段删除/类型变更/新增必填入参/选填改必填/出参必有降级即 FAIL，新增接口与可选字段等兼容变更仅 INFO；复用 contract_lint 解析器，退出码 0/1/2 与 lint 系一致。`tests/` 固化 12 个回归用例（含仓库示例自比对）；README/SKILL 脚本清单同步补齐（含此前遗漏的 doc_pack/token_report，脚本数更正为七）。(903a69c)
 - chore(roadmap)：任务池补充 6 项——`contract_diff.py` 契约破坏性变更检测、`probe_api.py` 写操作与自定义请求头、`doc_pack.py` manifest 完整性清单、契约版本演进指南、「契约破坏事件」复盘模板、`changelog_lint.py` 范式检查接 CI。(6257d72)
 
 ## v1.1.0 — 2026-10-09
