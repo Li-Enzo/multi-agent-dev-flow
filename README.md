@@ -36,10 +36,13 @@ multi-agent-dev-flow/
 │   └── token-saving.md       # Token 节省与本地资源利用
 ├── assets/templates/         # 五套文档模板（PRD/风格/契约/用例/协作规范；契约模板含英文版 api-contract-template.en.md）
 ├── examples/                 # 模板套用示例（示例商城完整契约 + 用例 + lint 证明）
-└── scripts/                  # 四个零依赖本地脚本（均已实测）
+└── scripts/                  # 七个零依赖本地脚本（均已实测 + pytest 回归）
     ├── contract_lint.py      # 契约文档完整性检查
+    ├── contract_diff.py      # 契约破坏性变更检测
     ├── changelog_check.py    # 契约变更硬规则守门员
     ├── archive_memory.py     # 记忆文档按月归档
+    ├── doc_pack.py           # 文档包一键打包与一致性校验
+    ├── token_report.py       # 文档体量统计与归档建议
     └── probe_api.py          # 接口存活探针
 ```
 
@@ -61,6 +64,7 @@ cp -r multi-agent-dev-flow <你的项目>/.agents/skills/
 
 ```bash
 python scripts/contract_lint.py docs/api-contract.md
+python scripts/contract_diff.py docs/api-contract.v1.md docs/api-contract.md
 python scripts/changelog_check.py docs/api-contract.md CHANGELOG.md
 python scripts/archive_memory.py 进度/ --into 存档
 python scripts/probe_api.py -u <url> -a <action> -d '{"k":1}' -e 0,2002
