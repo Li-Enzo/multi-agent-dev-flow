@@ -16,10 +16,24 @@ class _Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def do_POST(self):
+    def _authorized(self):
+        # /api/secure 前缀模拟需鉴权端点：Authorization 头不对按约定回 1002
+        if self.path.startswith("/api/secure"):
+            return self.headers.get("Authorization") == "Bearer good"
+        return True
+
+    def _write_op(self):
         n = int(self.headers.get("Content-Length", 0))
-        req = json.loads(self.rfile.read(n) or b"{}")
-        self._reply({"code": 0, "msg": "post ok", "echo": req})
+        req = json.loads(self.rfile.read(n) or b"{}")  # 先读尽 body，避免连接 RST
+        if not self._authorized():
+            return self._reply({"code": 1002, "msg": "未登录 / token 失效"})
+        self._reply({"code": 0, "msg": "write ok", "echo": req})
+
+    def do_POST(self):
+        self._write_op()
+
+    def do_PUT(self):
+        self._write_op()
 
     def do_GET(self):
         from urllib.parse import parse_qs, urlparse
@@ -87,3 +101,43 @@ def test_network_error_exit_1(run_script):
 def test_invalid_data_json_exit_2(run_script, http_server):
     r = run_script("probe_api.py", "-u", f"{http_server}/api/echo", "-a", "a", "-d", "{bad")
     assert r.returncode == 2
+
+
+def test_put_ok(run_script, http_server):
+    r = run_script("probe_api.py", "-u", f"{http_server}/api/echo", "-m", "PUT",
+                   "-a", "item.update", "-d", '{"id": 1}', "-e", "0")
+    assert r.returncode == 0
+    assert "[ OK ]" in r.stdout
+
+
+def test_put_code_mismatch_exit_2(run_script, http_server):
+    r = run_script("probe_api.py", "-u", f"{http_server}/api/echo", "-m", "PUT",
+                   "-a", "a", "-e", "500")
+    assert r.returncode == 2
+    assert "[FAIL]" in r.stdout
+
+
+def test_custom_header_auth_pass(run_script, http_server):
+    r = run_script("probe_api.py", "-u", f"{http_server}/api/secure/ping", "-a", "secure.ping",
+                   "-H", "Authorization: Bearer good", "-e", "0")
+    assert r.returncode == 0
+
+
+def test_auth_header_missing_rejected(run_script, http_server):
+    r = run_script("probe_api.py", "-u", f"{http_server}/api/secure/ping", "-a", "secure.ping")
+    assert r.returncode == 2
+    assert "1002" in r.stdout
+
+
+def test_put_with_auth_header(run_script, http_server):
+    r = run_script("probe_api.py", "-u", f"{http_server}/api/secure/item", "-m", "PUT",
+                   "-a", "secure.update", "-d", '{"id": 1}',
+                   "-H", "Authorization: Bearer good")
+    assert r.returncode == 0
+
+
+def test_malformed_header_exit_2(run_script, http_server):
+    r = run_script("probe_api.py", "-u", f"{http_server}/api/echo", "-a", "a",
+                   "-H", "no-colon-here")
+    assert r.returncode == 2
+    assert "请求头格式" in r.stdout

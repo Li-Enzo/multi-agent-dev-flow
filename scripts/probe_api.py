@@ -2,9 +2,10 @@
 """probe_api.py — 接口存活探针
 
 代替 AI 手工 curl 验证接口。按统一约定发送
-  POST {"action": "<action>", "data": {...}}
+  POST/PUT {"action": "<action>", "data": {...}}
 或 GET（action 与 data 字段拼入 query string），
 并检查返回体 code 是否在期望集合内。
+-H 可重复传入自定义请求头（覆盖 Authorization 等鉴权头，支持写操作探测）。
 
 URL 解析规则（-u 可省略）:
   1. -u 以 http:// 或 https:// 开头 → 原样使用；
@@ -12,7 +13,7 @@ URL 解析规则（-u 可省略）:
   3. -u 省略 → 直接使用 PROBE_API_BASE。
 
 用法:
-    python probe_api.py -u <URL> -a <action> [-m GET] [-d '<json>'] [-e 0,2002] [-H "k: v"] [-t 10] [-v]
+    python probe_api.py -u <URL> -a <action> [-m POST|PUT|GET] [-d '<json>'] [-e 0,2002] [-H "k: v"] [-t 10] [-v]
     PROBE_API_BASE=https://api.example.com python probe_api.py -u /api/ping -a ping
 
 退出码: 0 = code 命中期望; 1 = 网络/HTTP 错误; 2 = code 未命中期望/参数错误。
@@ -44,7 +45,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-u", "--url", default=None, help="接口地址（绝对 URL 或相对路径；省略则用 PROBE_API_BASE）")
     ap.add_argument("-a", "--action", required=True, help="action 名")
-    ap.add_argument("-m", "--method", choices=["POST", "GET"], default="POST", help="请求方法（默认 POST）")
+    ap.add_argument("-m", "--method", choices=["POST", "PUT", "GET"], default="POST",
+                    help="请求方法（默认 POST；PUT 与 POST 同构，发 JSON body）")
     ap.add_argument("-d", "--data", default="{}", help="data JSON 字符串")
     ap.add_argument("-e", "--expect", default="0", help="期望 code 集合，逗号分隔（默认 0）")
     ap.add_argument("-H", "--header", action="append", default=[], help="额外请求头，可多次")
@@ -66,7 +68,7 @@ def main():
         return 2
 
     headers = {}
-    if args.method == "POST":
+    if args.method in ("POST", "PUT"):
         body = json.dumps({"action": args.action, "data": payload}).encode("utf-8")
         headers["Content-Type"] = "application/json"
     else:

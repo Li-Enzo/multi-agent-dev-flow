@@ -67,7 +67,7 @@ python scripts/contract_lint.py docs/api-contract.md
 python scripts/contract_diff.py docs/api-contract.v1.md docs/api-contract.md
 python scripts/changelog_check.py docs/api-contract.md CHANGELOG.md
 python scripts/archive_memory.py 进度/ --into 存档
-python scripts/probe_api.py -u <url> -a <action> -d '{"k":1}' -e 0,2002
+python scripts/probe_api.py -u <url> -a <action> -d '{"k":1}' -e 0,2002 [-m PUT] [-H "Authorization: Bearer <token>"]
 ```
 
 ## 设计来源
