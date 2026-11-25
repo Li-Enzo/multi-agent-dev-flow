@@ -12,7 +12,7 @@
 - [x] 为 4 个脚本补充 `tests/` 下的 pytest 用例（当前为手工实测，需固化成回归）
 - [x] `scripts/contract_diff.py`（新增）：契约破坏性变更检测——对比两版契约，字段删除/类型收窄/新增必填即 FAIL（防并行 agent 改崩调用方）
 - [x] `scripts/probe_api.py`：支持 POST/PUT 与自定义请求头（覆盖鉴权与写操作探测）
-- [ ] `scripts/doc_pack.py`：打包生成 manifest.json（文件清单 + SHA-256），解包侧可自检完整性
+- [x] `scripts/doc_pack.py`：打包生成 manifest.json（文件清单 + SHA-256），解包侧可自检完整性
 
 ## 文档与模板
 

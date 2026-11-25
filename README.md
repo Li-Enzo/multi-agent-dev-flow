@@ -41,7 +41,7 @@ multi-agent-dev-flow/
     ├── contract_diff.py      # 契约破坏性变更检测
     ├── changelog_check.py    # 契约变更硬规则守门员
     ├── archive_memory.py     # 记忆文档按月归档
-    ├── doc_pack.py           # 文档包一键打包与一致性校验
+    ├── doc_pack.py           # 文档包一键打包与 manifest 完整性自检
     ├── token_report.py       # 文档体量统计与归档建议
     └── probe_api.py          # 接口存活探针
 ```

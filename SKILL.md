@@ -66,7 +66,7 @@ description: 多 AI 协作全栈开发流程编排。当用户要求从零开发
 | `contract_diff.py` | 契约破坏性变更检测：对比两版契约，字段删除/类型变更/新增必填/必有降级即 FAIL | `python scripts/contract_diff.py docs/api-contract.v1.md docs/api-contract.md` |
 | `changelog_check.py` | 契约变更同步检查：契约文件修改时间晚于 CHANGELOG 最后一条即报警（硬规则守门员） | `python scripts/changelog_check.py docs/api-contract.md CHANGELOG.md` |
 | `archive_memory.py` | 记忆归档：把进度/过程文档按日期归入 `存档-YYYY-MM/` 并生成清单 | `python scripts/archive_memory.py 进度/ --into 存档` |
-| `doc_pack.py` | 文档包一键打包：版本号连续、包内字节与磁盘逐字节校验、旧包自动入存档 | `python scripts/doc_pack.py docs/ --name api-docs` || `token_report.py` | 文档体量统计：超阈值建议转 references / 归档，配合 token-saving 范式 | `python scripts/token_report.py docs/` |
+| `doc_pack.py` | 文档包一键打包：版本号连续、包内字节与磁盘逐字节校验、manifest.json（SHA-256 清单）随包、解包侧 `--verify` 自检 | `python scripts/doc_pack.py docs/ --name api-docs` || `token_report.py` | 文档体量统计：超阈值建议转 references / 归档，配合 token-saving 范式 | `python scripts/token_report.py docs/` |
 | `probe_api.py` | 接口探针：发请求验证接口存活与返回码（POST/PUT/GET + 自定义请求头覆盖鉴权探测），代替 AI 手工 curl | `python scripts/probe_api.py -u <url> -a <action> -d '{"k":1}'` |
 
 > 跑通流水线不靠 AI 记忆力，靠这些脚本与文档。新增重复性工作时，第一反应是"写成脚本"，第二反应才是让 AI 做。

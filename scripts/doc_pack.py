@@ -6,18 +6,23 @@
   2. 版本号连续不跳号：扫描输出目录已有 <name>-v<N>.zip，新版本 = 最大版本 + 1；
   3. 字节一致校验：打包后重开包，包内每个成员与磁盘文件逐字节比对；
   4. 时序校验：包文件 mtime 晚于所有源文件的最后修改时间；
-  5. 旧包移入存档目录。
+  5. 旧包移入存档目录；
+  6. 完整性清单：包内首成员 manifest.json 记录每个文件的 SHA-256 与大小，
+     解包侧用 --verify 自检（成员缺失/多出/摘要不一致即 FAIL）。
 
 用法:
     python doc_pack.py [源路径...] [-o <输出目录>] [--name <包名前缀>] [--archive <存档目录>] [--dry-run]
+    python doc_pack.py --verify <包路径.zip>
 
 源路径缺省为 docs/；目录会递归收集 *.md / *.txt / *.json。
 默认输出目录为 文档包/，存档目录为 文档包/存档/。
 
-退出码: 0 = 打包并校验通过; 1 = 字节/时序校验失败; 2 = 参数/IO 错误。
+退出码: 0 = 打包/自检通过; 1 = 校验失败; 2 = 参数/IO 错误。
 """
 
 import argparse
+import hashlib
+import json
 import os
 import re
 import shutil
@@ -28,6 +33,7 @@ from pathlib import Path
 
 DEFAULT_GLOBS = ("*.md", "*.txt", "*.json")
 VERSION_RE = re.compile(r"^(?P<name>.+)-v(?P<ver>\d+)\.zip$")
+MANIFEST_NAME = "manifest.json"
 
 
 def collect_sources(paths, globs):
@@ -66,12 +72,37 @@ def make_members(sources):
     return [(str(f.relative_to(common)).replace("\\", "/"), f) for f in sources]
 
 
+def build_manifest(members, name, version):
+    """生成完整性清单：{name, version, created_at, files:[{path, sha256, size}]}。"""
+    files = []
+    for arcname, f in members:
+        data = f.read_bytes()
+        files.append({
+            "path": arcname,
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "size": len(data),
+        })
+    return {
+        "name": name,
+        "version": version,
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "files": files,
+    }
+
+
+def manifest_bytes(manifest):
+    """manifest 序列化为包内成员字节（utf-8，缩进格式便于人读）。"""
+    return json.dumps(manifest, ensure_ascii=False, indent=2).encode("utf-8")
+
+
 def verify_pack(pack, members):
     """硬规则校验：包内成员与磁盘逐字节一致；包 mtime 晚于所有源文件 mtime。"""
     problems = []
     disk = dict(members)
     with zipfile.ZipFile(pack) as zf:
-        names = [n for n in zf.namelist() if not n.endswith("/")]
+        # manifest.json 是打包期生成的清单成员，不参与成员比对
+        names = [n for n in zf.namelist()
+                 if not n.endswith("/") and n != MANIFEST_NAME]
         if set(names) != set(disk):
             missing = sorted(set(disk) - set(names))
             extra = sorted(set(names) - set(disk))
@@ -91,6 +122,44 @@ def verify_pack(pack, members):
     return problems
 
 
+def verify_manifest(pack):
+    """解包侧完整性自检：manifest.json 清单 vs 包内成员（存在性 + SHA-256 + 大小）。
+
+    返回问题列表（空 = 通过）。manifest 缺失/损坏视为校验失败而非程序错误。
+    """
+    problems = []
+    try:
+        zf = zipfile.ZipFile(pack)
+    except zipfile.BadZipFile:
+        return [f"不是合法 zip 包: {pack}"]
+    with zf:
+        names = [n for n in zf.namelist() if not n.endswith("/")]
+        if MANIFEST_NAME not in names:
+            return [f"包内无 {MANIFEST_NAME}（老版本包或手工制作），无法自检完整性"]
+        try:
+            manifest = json.loads(zf.read(MANIFEST_NAME).decode("utf-8"))
+            listed = {e["path"]: e for e in manifest["files"]}
+        except (json.JSONDecodeError, KeyError, TypeError) as exc:
+            return [f"{MANIFEST_NAME} 解析失败: {exc}"]
+        member_names = [n for n in names if n != MANIFEST_NAME]
+        missing = sorted(set(listed) - set(member_names))
+        extra = sorted(set(member_names) - set(listed))
+        if missing:
+            problems.append(f"清单列出但包内缺失: {missing}")
+        if extra:
+            problems.append(f"包内多出清单外成员: {extra}")
+        for n in member_names:
+            if n not in listed:
+                continue
+            data = zf.read(n)
+            entry = listed[n]
+            if hashlib.sha256(data).hexdigest() != entry.get("sha256"):
+                problems.append(f"SHA-256 不一致: {n}（内容被改或清单失真）")
+            elif len(data) != entry.get("size"):
+                problems.append(f"大小不一致: {n}")
+    return problems
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("src", nargs="*", default=None, help="源文件/目录（缺省 docs/）")
@@ -98,7 +167,26 @@ def main():
     ap.add_argument("--name", default="docpack", help="包名前缀（默认 docpack）")
     ap.add_argument("--archive", default=None, help="旧包存档目录（默认 <输出目录>/存档/）")
     ap.add_argument("--dry-run", action="store_true", help="只打印计划，不实际打包")
+    ap.add_argument("--verify", metavar="<包路径.zip>", default=None,
+                    help="解包侧自检：核对包内 manifest.json 与成员 SHA-256，不打 new 包")
     args = ap.parse_args()
+
+    if args.verify is not None:
+        pack = Path(args.verify)
+        if not pack.is_file():
+            print(f"[ERROR] 包文件不存在: {pack}")
+            return 2
+        problems = verify_manifest(pack)
+        if problems:
+            print(f"[FAIL] {pack} 完整性自检未通过:")
+            for p in problems:
+                print(f"       - {p}")
+            return 1
+        with zipfile.ZipFile(pack) as zf:
+            count = len([n for n in zf.namelist()
+                         if not n.endswith("/") and n != MANIFEST_NAME])
+        print(f"[ OK ] 完整性自检通过：{MANIFEST_NAME} 清单 {count} 个文件，SHA-256 全部一致")
+        return 0
 
     out_dir = Path(args.out)
     archive_dir = Path(args.archive) if args.archive else out_dir / "存档"
@@ -129,6 +217,8 @@ def main():
     try:
         out_dir.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(new_pack, "w", zipfile.ZIP_DEFLATED) as zf:
+            # manifest.json 作为首成员进包：解包侧据此自检完整性
+            zf.writestr(MANIFEST_NAME, manifest_bytes(build_manifest(members, args.name, new_ver)))
             for arcname, f in members:
                 zf.write(f, arcname=arcname)
     except OSError as exc:
@@ -144,6 +234,7 @@ def main():
         return 1
     print(f"\n[ OK ] 字节一致校验通过：{len(sources)} 个成员与磁盘逐字节相同")
     print(f"[ OK ] 时序校验通过：包 mtime 晚于所有源文件")
+    print(f"[ OK ] 完整性清单：{MANIFEST_NAME} 已写入包内（{len(members)} 个文件的 SHA-256）")
 
     moved = []
     if packs:
