@@ -21,7 +21,7 @@
 - [x] 接口契约模板增加英文版 `api-contract-template.en.md`
 - [x] `examples/`（新增）：一份完整的示例契约 + 对应测试用例 + 通过 contract_lint 的证明，演示模板如何套用
 - [x] README 增加徽章（MIT license、Python 版本、最后提交）
-- [ ] 契约版本演进指南（references 或 assets）：v1→v2 只加不改、字段废弃标记、并行期与下线公告模板
+- [x] 契约版本演进指南（references 或 assets）：v1→v2 只加不改、字段废弃标记、并行期与下线公告模板
 - [ ] `references/agent-collab.md` 补充「契约破坏事件」复盘模板（事件线 / 影响面 / 防再发）
 
 ## 工程化

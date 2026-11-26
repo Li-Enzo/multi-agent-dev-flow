@@ -46,6 +46,7 @@
 2. **当次交付必须重打包项目文档包**：包内契约与磁盘最新版字节一致，打包时间晚于契约最后修改时间；旧包移入存档目录，版本号连续不跳号。
 3. 自标"需重打包"而未执行 = 交付未完成。
 4. 用 `scripts/changelog_check.py` 自动守门：契约 mtime 晚于 CHANGELOG 最新条目即报警。
+5. 版本演进纪律（只加不改 / 废弃标记 / 并行期 / 下线公告）见 `references/contract-evolution.md`，破坏性判定用 `scripts/contract_diff.py`。
 
 ## 6. 代码协作规范（单仓 monorepo）
 

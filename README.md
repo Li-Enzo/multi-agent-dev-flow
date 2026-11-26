@@ -26,13 +26,14 @@
 ```
 multi-agent-dev-flow/
 ├── SKILL.md                  # Skill 主文件（触发与核心流程）
-├── references/               # 七份范式文档（按需加载）
+├── references/               # 八份范式文档（按需加载）
 │   ├── workflow.md           # 八阶段操作手册
 │   ├── frontend-paradigm.md  # 前端范式（UI 先行、主题即配置、契约纪律）
 │   ├── backend-paradigm.md   # 后端范式（写操作五步法、幂等、金额/时区红线）
 │   ├── database-paradigm.md  # 数据库范式（枚举唯一登记、迁移脚本化）
 │   ├── art-style.md          # 美术风格范式（风格指导→HTML 预览→审查整改）
 │   ├── agent-collab.md       # 多 agent 协作与防幻觉机制
+│   ├── contract-evolution.md # 契约版本演进指南（只加不改、废弃标记、并行期与下线公告）
 │   └── token-saving.md       # Token 节省与本地资源利用
 ├── assets/templates/         # 五套文档模板（PRD/风格/契约/用例/协作规范；契约模板含英文版 api-contract-template.en.md）
 ├── examples/                 # 模板套用示例（示例商城完整契约 + 用例 + lint 证明）
