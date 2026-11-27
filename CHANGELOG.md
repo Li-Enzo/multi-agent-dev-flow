@@ -5,6 +5,7 @@
 
 ## Unreleased
 
+- docs(references)：`agent-collab.md` 新增 §8「契约破坏事件复盘模板」——触发条件三条（diff FAIL 漏网/联调回溯确认暗改/私下兼容）、可复制模板（事件线时间线表、影响面三问、根因五类勾选、防再发措施含验证方式列）、写完后三个闭环动作（措施落地验证/CHANGELOG 留指针/规则反哺工具库）；§5 加指针串联演进指南与复盘入口。SKILL.md 与 README 描述行同步。
 - docs(references)：新增 `references/contract-evolution.md` 契约版本演进指南——只加不改原则（允许/禁止对照表）、破坏性判定与 `contract_diff.py` 五类 FAIL 口径对齐、字段废弃标记约定（删除线 + 迁移指引格式与示例）、版本号与并行期纪律（内部 2 周/外部 1 季度、双写双读、流量归零才移除）、可复制下线公告模板、四道工具守门流程表。README/SKILL 目录与 `agent-collab.md` §5 交叉引用同步（范式文档更正为八份）。(35af350)
 - feat(scripts)：`doc_pack.py` 打包生成包内 `manifest.json` 完整性清单（每个成员的路径/SHA-256/大小 + 包名/版本/打包时间，首成员入包），新增 `--verify <包.zip>` 解包侧自检模式（成员缺失/多出/摘要或大小不一致即 FAIL；无 manifest 的老包明确报「无法自检」）；打包期字节校验相应跳过清单成员。`tests/test_doc_pack.py` 新增 6 例（清单内容与磁盘 SHA-256 逐文件一致、首成员位置、自检通过/篡改/多出/缺失/无清单/包不存在）。SKILL.md 与 README 脚本说明同步。(0dc9f60)
 - feat(scripts)：`probe_api.py` 支持 PUT 写操作探测（与 POST 同构发 JSON body，`-m POST|PUT|GET`）并补齐自定义请求头能力说明——`-H` 此前已实装但未入文档与回归；`tests/test_probe_api.py` 新增 6 例（PUT 正常/错误码、鉴权头通过与缺失拒绝、畸形头拒参），测试夹具加鉴权端点模拟（`/api/secure` 前缀校验 Authorization）。SKILL.md 与 README 用法同步。(c299eb0)

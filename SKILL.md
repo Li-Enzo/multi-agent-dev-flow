@@ -41,7 +41,7 @@ description: 多 AI 协作全栈开发流程编排。当用户要求从零开发
 - 后端工作范式（函数即边界、写操作五步法、幂等、金额/时区红线）：`references/backend-paradigm.md`
 - 数据库范式（命名、索引、枚举登记、软删除、生命周期）：`references/database-paradigm.md`
 - 美术风格范式（风格指导文档、HTML 预览、审查整改报告、禁忌清单）：`references/art-style.md`
-- 多 agent 协作与防幻觉（角色分工、互审、契约变更硬规则）：`references/agent-collab.md`
+- 多 agent 协作与防幻觉（角色分工、互审、契约变更硬规则、配置漂移防护、契约破坏复盘模板）：`references/agent-collab.md`
 - 契约版本演进指南（只加不改、破坏性判定、废弃标记、并行期与下线公告模板）：`references/contract-evolution.md`
 - Token 节省与本地资源（记忆归档、脚本清单、探针）：`references/token-saving.md`
 
