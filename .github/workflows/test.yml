@@ -1,5 +1,6 @@
 # push / PR 到 main 时自动跑 scripts 的 pytest 回归
 # 对应 ROADMAP「工程化」：把 tests/ 下 25 个用例固化为 CI 门禁
+# 另挂 changelog_lint 守门：CHANGELOG Unreleased 非空 + push 提交范式检查
 name: tests
 
 on:
@@ -13,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # changelog_lint --git-range 需要完整历史
 
       - uses: actions/setup-python@v5
         with:
@@ -23,3 +26,10 @@ jobs:
 
       - name: Run regression tests
         run: python -m pytest tests/ -v
+
+      - name: Lint CHANGELOG（Unreleased 非空）
+        run: python scripts/changelog_lint.py CHANGELOG.md
+
+      - name: Lint commit messages（push 事件逐条校验本次推送的提交）
+        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        run: python scripts/changelog_lint.py --git-range "${{ github.event.before }}..${{ github.sha }}"

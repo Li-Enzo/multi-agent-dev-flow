@@ -37,10 +37,11 @@ multi-agent-dev-flow/
 │   └── token-saving.md       # Token 节省与本地资源利用
 ├── assets/templates/         # 五套文档模板（PRD/风格/契约/用例/协作规范；契约模板含英文版 api-contract-template.en.md）
 ├── examples/                 # 模板套用示例（示例商城完整契约 + 用例 + lint 证明）
-└── scripts/                  # 七个零依赖本地脚本（均已实测 + pytest 回归）
+└── scripts/                  # 八个零依赖本地脚本（均已实测 + pytest 回归）
     ├── contract_lint.py      # 契约文档完整性检查
     ├── contract_diff.py      # 契约破坏性变更检测
     ├── changelog_check.py    # 契约变更硬规则守门员
+    ├── changelog_lint.py     # CHANGELOG 非空 + commit message 范式检查
     ├── archive_memory.py     # 记忆文档按月归档
     ├── doc_pack.py           # 文档包一键打包与 manifest 完整性自检
     ├── token_report.py       # 文档体量统计与归档建议

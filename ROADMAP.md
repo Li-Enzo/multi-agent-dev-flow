@@ -28,7 +28,7 @@
 
 - [x] 仓库自身引入 CHANGELOG.md 并打 `v1.1.0` tag
 - [x] GitHub Actions（可选）：push 时自动跑 scripts 的 pytest
-- [ ] `scripts/changelog_lint.py`（新增）：CHANGELOG Unreleased 非空校验 + commit message 范式（`type(scope): 简述`）检查，接入 CI
+- [x] `scripts/changelog_lint.py`（新增）：CHANGELOG Unreleased 非空校验 + commit message 范式（`type(scope): 简述`）检查，接入 CI
 
 ## 关联项目
 
